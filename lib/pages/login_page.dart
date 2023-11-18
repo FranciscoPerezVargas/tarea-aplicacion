@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_certamen_aplicacion/pages/home_page.dart';
 import 'package:flutter_certamen_aplicacion/services/login_google.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,16 +21,19 @@ class LoginPage extends StatelessWidget {
               height: 100.0,
               child: ElevatedButton(
                 onPressed: () async {
-                  final User? user = await loginGoogle.googleLogin();
-                  if (user != null) {
-                    // Iniciar sesión exitosamente, redirigir a otra pantalla
-                    print('Inicio de sesión exitoso: ${user.displayName}');
-                    // Aquí puedes redirigir a la siguiente pantalla
-                  } else {
-                    // Manejar caso de error o cancelación del inicio de sesión
-                    print('Error al iniciar sesión');
-                  }
-                },
+                final User? user = await loginGoogle.googleLogin();
+                if (user != null) {
+                  // Inicio de sesión exitoso, redirigir a MenuPage con el objeto User completo
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(user: user),
+                    ),
+                  );
+                } else {
+                  // Manejar caso de error o cancelación del inicio de sesión
+                  print('Error al iniciar sesión');
+                }
+              },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
