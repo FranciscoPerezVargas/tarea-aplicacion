@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "207908187587",
+    "project_id": "tarea-aplicacion",
+    "storage_bucket": "tarea-aplicacion.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207908187587:android:af9f8364a6dd9cb67f6176",
+        "android_client_info": {
+          "package_name": "com.tarea_certamen_aplicacion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrVIHXEUBTSnFYhaGr8xtYCJZGXJ7OEm8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
