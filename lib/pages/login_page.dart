@@ -7,6 +7,35 @@ import 'package:firebase_auth/firebase_auth.dart';
 class LoginPage extends StatelessWidget {
   final LoginGoogle loginGoogle = LoginGoogle();
 
+/*Todavia no lo USO
+  void navegarHomePage(BuildContext context, User? usuario) {
+    if (usuario != null && context != null && Navigator.canPop(context)) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => HomePage(usuario: usuario),
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Información'),
+            content: Text('Por favor, selecciona una cuenta para continuar.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+  */
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -21,19 +50,41 @@ class LoginPage extends StatelessWidget {
               height: 100.0,
               child: ElevatedButton(
                 onPressed: () async {
-                final User? user = await loginGoogle.googleLogin();
-                if (user != null) {
-                  // Inicio de sesión exitoso, redirigir a MenuPage con el objeto User completo
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(user: user),
-                    ),
-                  );
-                } else {
-                  // Manejar caso de error o cancelación del inicio de sesión
-                  print('Error al iniciar sesión');
-                }
-              },
+                  try {
+                    final User? usuario = await loginGoogle.googleLogin();
+                    if (usuario != null) {
+                      
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(usuario: usuario),
+                        ),
+                      );
+                    } else {
+                      
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Información'),
+                            content: Text('Por favor, selecciona una cuenta para continuar.'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () { 
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  } catch (e) {
+                    // Manejar cualquier excepción
+                    print('Error al iniciar sesión: $e');
+                    
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
@@ -97,7 +148,7 @@ class LoginPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20), // Espacio entre textos
+                  SizedBox(height: 20),
                   SizedBox(
                     height: 300,
                     child: Container(
@@ -122,7 +173,7 @@ class LoginPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20), // Espacio entre textos
+                  SizedBox(height: 20), 
                   SizedBox(
                     height: 300,
                     child: Container(

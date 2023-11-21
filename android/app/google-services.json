@@ -12,7 +12,20 @@
           "package_name": "com.tarea_certamen_aplicacion"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "207908187587-k5ueqqejauo9gmdht9t5o4hs3aru31e6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tarea_certamen_aplicacion",
+            "certificate_hash": "0d6b6d515f75696940a28f070a0626aacd421a59"
+          }
+        },
+        {
+          "client_id": "207908187587-rm0ass1dnveku76c9rs33n7gpk4hbugo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBrVIHXEUBTSnFYhaGr8xtYCJZGXJ7OEm8"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "207908187587-rm0ass1dnveku76c9rs33n7gpk4hbugo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

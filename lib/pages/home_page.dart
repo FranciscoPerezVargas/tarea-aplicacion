@@ -1,13 +1,42 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-class HomePage extends StatelessWidget {
-  final User user;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'login_page.dart'; 
+import 'EventosPage/eventos_page.dart';
+import 'EventosPage/buscador_page.dart';
+import 'EventosPage/nuevo_evento_page.dart';
 
-  const HomePage({required this.user});
+
+
+
+class HomePage extends StatefulWidget {
+  final User usuario;
+
+  const HomePage({required this.usuario});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool _showEventos = true;
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth _authFire = FirebaseAuth.instance;
+    final GoogleSignIn _googleSesion = GoogleSignIn();
+
+   Future<void> _cerrarSesion(BuildContext context) async {
+      await _authFire.signOut(); 
+      await _googleSesion.signOut();
+      Navigator.of(context).pushAndRemoveUntil( 
+        MaterialPageRoute(builder: (context) => LoginPage()),
+        (Route<dynamic> route) => false,
+      );
+    }
+
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text('Entradas'),
         leading: Builder(
@@ -18,20 +47,17 @@ class HomePage extends StatelessWidget {
               },
               child: Padding(
                 padding: EdgeInsets.all(8),
-               
                 child: Container(
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.black, width: 1), // Añadir borde negro
-                    // Añadir padding a todas las direcciones
-                    
+                    border: Border.all(color: Colors.black, width: 1),
                   ),
                   child: Center(
                     child: Text(
-                      user.displayName?.substring(0, 1).toUpperCase() ?? '',
+                      widget.usuario.displayName?.substring(0, 1).toUpperCase() ?? '',
                       style: TextStyle(fontSize: 24),
                     ),
                   ),
@@ -40,19 +66,33 @@ class HomePage extends StatelessWidget {
             );
           },
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              setState(() {
+                _showEventos = !_showEventos; // Cambia entre eventos y el Buscador
+              });
+            },
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 90.0, right: 10, left: 10),
+        child: _showEventos ? EventosPage(usuario: widget.usuario) : BuscadorPage(),
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text(user.displayName ?? ''),
-              accountEmail: Text(user.email ?? ''),
+              accountName: Text(widget.usuario.displayName ?? ''),
+              accountEmail: Text(widget.usuario.email ?? ''),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
-                radius: 60, // Ajusta el tamaño del CircleAvatar aquí
+                radius: 60,
                 child: Text(
-                  user.displayName?.substring(0, 1).toUpperCase() ?? '',
+                  widget.usuario.displayName?.substring(0, 1).toUpperCase() ?? '',
                   style: TextStyle(fontSize: 36),
                 ),
               ),
@@ -64,21 +104,16 @@ class HomePage extends StatelessWidget {
               title: Text('Mi Perfil'),
               onTap: () {
                 // Lógica para navegar a la página de perfil
-                // Puedes implementar esto según tu estructura de navegación
               },
             ),
-            ListTile(
+             ListTile(
               title: Text('Cerrar sesión'),
-              onTap: () {
-                // Lógica para cerrar sesión
-                // Puedes implementar esto según tu lógica de cierre de sesión
+              onTap: () async {
+                await _cerrarSesion(context); // Llama a la función para cerrar la sesión
               },
             ),
           ],
         ),
-      ),
-      body: Container(
-        
       ),
     );
   }
