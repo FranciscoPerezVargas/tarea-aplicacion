@@ -3,14 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'login_page.dart'; 
 import 'EventosPage/eventos_page.dart';
-import 'EventosPage/buscador_page.dart';
-import 'EventosPage/nuevo_evento_page.dart';
-
 
 
 
 class HomePage extends StatefulWidget {
-  final User usuario;
+  final User? usuario;
 
   const HomePage({required this.usuario});
 
@@ -38,75 +35,68 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text('Entradas'),
+        title: Text('Tarjetas de Eventos Publicos'),
+        backgroundColor: const Color.fromARGB(255, 91, 150, 199),
         leading: Builder(
           builder: (BuildContext context) {
-            return GestureDetector(
-              onTap: () {
-                Scaffold.of(context).openDrawer();
-              },
-              child: Padding(
-                padding: EdgeInsets.all(8),
-                child: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.black, width: 1),
-                  ),
-                  child: Center(
-                    child: Text(
-                      widget.usuario.displayName?.substring(0, 1).toUpperCase() ?? '',
-                      style: TextStyle(fontSize: 24),
+            return widget.usuario != null
+              ? GestureDetector(
+                  onTap: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.black, width: 1),
+                      ),
+                      child: Center(
+                        child: Text(
+                          widget.usuario!.displayName?.substring(0, 1).toUpperCase() ?? '',
+                          style: TextStyle(fontSize: 24),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            );
+                )
+              : SizedBox();
+            
           },
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              setState(() {
-                _showEventos = !_showEventos; // Cambia entre eventos y el Buscador
-              });
-            },
-          ),
-        ],
+        
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 90.0, right: 10, left: 10),
-        child: _showEventos ? EventosPage(usuario: widget.usuario) : BuscadorPage(),
+      body: 
+      
+      Padding(
+        
+        padding: const EdgeInsets.only(top: 90.0),
+        child: _showEventos ? EventosPage(usuario: widget.usuario) : null,
       ),
-      drawer: Drawer(
+      drawer: widget.usuario != null
+    ? Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text(widget.usuario.displayName ?? ''),
-              accountEmail: Text(widget.usuario.email ?? ''),
+              accountName: Text(widget.usuario!.displayName ?? ''),
+              accountEmail: Text(widget.usuario!.email ?? ''),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
                 radius: 60,
                 child: Text(
-                  widget.usuario.displayName?.substring(0, 1).toUpperCase() ?? '',
+                  widget.usuario!.displayName?.substring(0, 1).toUpperCase() ?? '',
                   style: TextStyle(fontSize: 36),
                 ),
               ),
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Color.fromARGB(170, 37, 208, 223),
               ),
             ),
             ListTile(
-              title: Text('Mi Perfil'),
-              onTap: () {
-                // Lógica para navegar a la página de perfil
-              },
-            ),
-             ListTile(
               title: Text('Cerrar sesión'),
               onTap: () async {
                 await _cerrarSesion(context); // Llama a la función para cerrar la sesión
@@ -114,7 +104,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-      ),
+      )
+    : null,
+
     );
   }
 }

@@ -1,50 +1,85 @@
-//Los like son colocados automaitamente en 0
-  //recordar en editar eventos pasar el numero de likes 
 
-
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_certamen_aplicacion/services/firestorage_service.dart';
 import 'package:flutter_certamen_aplicacion/services/firestore_service.dart';
 import 'dart:io';
 
-class NuevoEventoPage extends StatefulWidget {
-  final User usuario;
 
-  const NuevoEventoPage({Key? key, required this.usuario}) : super(key: key);
+
+
+class EditarEventoPage extends StatefulWidget {
+   final User usuario;
+  final QueryDocumentSnapshot<Object?> evento;
+final Image imagenEvento;
+
+  const EditarEventoPage({
+    Key? key,
+    required this.usuario,
+    required this.evento,
+   required this.imagenEvento,
+  }) : super(key: key);
+
   @override
-  State<NuevoEventoPage> createState() => _NuevoEventoPageState();
+  State<EditarEventoPage> createState() => _EditarEventoPageState();
 }
 
-class _NuevoEventoPageState extends State<NuevoEventoPage> {
+class _EditarEventoPageState extends State<EditarEventoPage> {
   TextEditingController nombreCtrl = TextEditingController();
   TextEditingController lugarCtrl = TextEditingController();
   TextEditingController descripcionCtrl = TextEditingController();
+
+  //cambiar esto
   DateTime fechaHora = DateTime.now();
 
-  String selectedTipo = 'Fiesta';
+  
+  String selectedTipo = '';
   List<String> tipos = ['Fiesta', 'Evento deportivo', 'Concierto'];
+
   File? imagenSubir;
+  String? imagenURL;
   String url = ''; 
+
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   List<String> listaErrores = [];
+   
+  @override
+  void initState() {
+    super.initState();
+    
+    
+    selectedTipo = widget.evento['tipo'] ?? 'Fiesta';
+    nombreCtrl.text = widget.evento['nombre'] ?? '';
+    fechaHora = (widget.evento['fechaHora'] as Timestamp).toDate() ?? DateTime.now();
+    lugarCtrl.text = widget.evento['lugar'] ?? '';
+    descripcionCtrl.text = widget.evento['descripcion'] ?? '';
+    imagenURL = widget.evento['imagenURL'] ?? '';
+  }
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       resizeToAvoidBottomInset: true,
+      
       appBar: AppBar(
         title: Text('Nuevo Evento', style: TextStyle(color: Colors.white)),
       ),
       body: Form(     
+        
         key: formKey,
         child: Padding(
           padding: EdgeInsets.all(10),
           child: ListView(
             children: [
+
+
               /////Nombre
               TextFormField(
+                
                 controller: nombreCtrl,
                 keyboardType: TextInputType.text,
                 decoration: const InputDecoration(
@@ -55,9 +90,15 @@ class _NuevoEventoPageState extends State<NuevoEventoPage> {
                  
                   if (value == null || value.isEmpty){
                     return "Campo nombre requerido";
-                  } 
+                  }
+                  
+                  
                 },
               ),
+              
+
+
+
               //////DESCRIPCION
               TextFormField(
                 controller: descripcionCtrl,
@@ -90,8 +131,10 @@ class _NuevoEventoPageState extends State<NuevoEventoPage> {
 
               /////// Tipo de Evento (ComboBox)
               Padding(
+                
                 padding: const EdgeInsets.only(top: 18.0 , bottom: 10),
                 child: DropdownButtonFormField<String>(
+                  
                   value: selectedTipo,
                   items: tipos.map((String tipo) {
                     return DropdownMenuItem<String>(
@@ -149,7 +192,7 @@ class _NuevoEventoPageState extends State<NuevoEventoPage> {
                 style: TextStyle(fontSize: 16),
               ),
              
-              //LA IMAGEN
+              /////////////LA IMAGEN
               Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
                 child: ElevatedButton(
@@ -165,7 +208,7 @@ class _NuevoEventoPageState extends State<NuevoEventoPage> {
                     
                     
                   },
-                  child: Text('Seleccionar imagen'),
+                  child: Text('Cambiar imagen'),
                 ),
               ),
               // Mostrar la imagen seleccionada
@@ -178,7 +221,7 @@ class _NuevoEventoPageState extends State<NuevoEventoPage> {
                         width: 100,
                         height: 400,
                       )
-                    : Text('No se ha seleccionado ninguna imagen'),
+                    : widget.imagenEvento,
               ),
               // BOTON Nuevo Evento
               Container(
@@ -186,7 +229,7 @@ class _NuevoEventoPageState extends State<NuevoEventoPage> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                  child: Text('Crear Nuevo Evento', style: TextStyle(color: Colors.white)),
+                  child: Text('Cambiar Evento', style: TextStyle(color: Colors.white)),
                   onPressed: () async {
                     
                     // Validar el formulario
@@ -198,17 +241,35 @@ class _NuevoEventoPageState extends State<NuevoEventoPage> {
                         url = await FireStorageService().subirImagen(imagenSubir!);
                         
                         
-                            FirestoreService().eventoAgregar(
-                              nombreCtrl.text.trim(),
-                              descripcionCtrl.text.trim(),
-                              lugarCtrl.text.trim(),
-                              selectedTipo,
-                              fechaHora,
-                              url,
-                              widget.usuario.uid,
-                            );
-                            Navigator.pop(context);
+                           FirestoreService().cambiarEventoImagen(
+                        widget.evento.id,
+                        {
+                          'nombre': nombreCtrl.text.trim(),
+                          'descripcion': descripcionCtrl.text.trim(),
+                          'lugar': lugarCtrl.text.trim(),
+                          'tipo': selectedTipo,
+                          'fechaHora': fechaHora,
+                          'imagenURL': url,
+                        },
+                      );
+                      Navigator.pop(context);
+                          
+                        
                       } 
+                      else if (formKey.currentState!.validate()) {
+                      FirestoreService().cambiarEvento(
+                        widget.evento.id,
+                        {
+                          'nombre': nombreCtrl.text.trim(),
+                          'descripcion': descripcionCtrl.text.trim(),
+                          'lugar': lugarCtrl.text.trim(),
+                          'tipo': selectedTipo,
+                          'fechaHora': fechaHora,
+                        },
+                      );
+                      Navigator.pop(context);
+                    }
+
                   },
                 ),
               ),

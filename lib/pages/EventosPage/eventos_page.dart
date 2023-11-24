@@ -1,196 +1,277 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_certamen_aplicacion/pages/EventosPage/detalles_eventos_page.dart';
 import 'package:flutter_certamen_aplicacion/pages/EventosPage/nuevo_evento_page.dart';
+import 'package:flutter_certamen_aplicacion/services/firestore_service.dart';
+import 'package:flutter_certamen_aplicacion/widgets/botones_evento.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
+class EventosPage extends StatefulWidget {
+  final User? usuario;
 
-class EventosPage extends StatelessWidget {
-  final User usuario;
+  const EventosPage({Key? key, required this.usuario}) : super(key: key);
 
-  EventosPage({required this.usuario});
+  @override
+  _EventosPageState createState() => _EventosPageState();
+}
+
+class _EventosPageState extends State<EventosPage> {
+  String? dropdownValue;
+  String? filtro = '1';
+  Set<String> likedEvents = {};
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            color: Colors.black,
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
-            child: Row(
-              children: [
-                 Container(
-                  padding: EdgeInsets.all(8.0),
+      body: Container(
+        decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/Marino.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Editar y Nuevo Evento
+            widget.usuario != null ? BotonesEvento(context, widget.usuario!) : SizedBox(),
+      
+            // Filtro
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Container(
+                
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 2),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color.fromARGB(255, 0, 0, 0)),
+                        borderRadius: BorderRadius.circular(8.0),
+                        color: Color.fromRGBO(160, 213, 244, 1)
+                        
+                      ),
+                      child: DropdownButton<String>(
+                        value: dropdownValue,
+                        hint: Text('Sin filtro'),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            dropdownValue = newValue;
+                            if (newValue == 'Sin Filtro') {
+                              filtro = '1';
+                            } else if (newValue == 'Nombre') {
+                              filtro = '2';
+                            } else if (newValue == 'Likes') {
+                              filtro = '3';
+                            } else if (newValue == 'Solo terminados') {
+                              filtro = '4';
+                            } else if (newValue == 'Solo actuales') {
+                              filtro = '5';
+                            }
+                          });
+                        },
+                        items: <String>['Sin Filtro', 'Nombre', 'Likes', 'Solo terminados', 'Solo actuales']
+                            .map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value, style: TextStyle(color: Colors.black, fontSize: 18),),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+           
+           Divider(color: Colors.black,),
+           Expanded(
+        child: StreamBuilder(
+          stream: obtenerGetPorFiltro(filtro, DateTime.now()),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        DateTime now = DateTime.now();
+        if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: Text("Esperando que se suban datos....."));
+        } else {
+          return ListView.separated(
+            physics: BouncingScrollPhysics(),
+            separatorBuilder: (context, index) => Divider(),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              var evento = snapshot.data!.docs[index];
+      
+              // Obtener la fecha y hora
+              Timestamp fechaHora = evento['fechaHora'] as Timestamp;
+              DateTime dateTime = fechaHora.toDate();
+      
+              // Obtener los colores de la fecha
+              Color textColor = Color.fromARGB(255, 255, 255, 255);
+              if (dateTime.isBefore(now)) {
+                textColor = Color.fromARGB(255, 241, 85, 28);
+              } else if (dateTime.difference(now).inDays <= 3) {
+                textColor = Colors.yellow;
+              }
+      
+              return SizedBox(
+                height: 200,
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 40.0, vertical: 5.0),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white),
-                    borderRadius: BorderRadius.circular(5.0),
+                      color: Color.fromARGB(255, 33, 31, 31),
+                      border: Border.all(color: textColor)
                   ),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center, 
                     children: [
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center, 
                         children: [
-                          Text(
-                            'Editar ',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18.0,
+                          SizedBox(
+                            height: 55,
+                            child: Container(
+                              
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      '${evento['nombre']}',
+                                      style: TextStyle(fontSize: 20.0, color: textColor),
+                                      
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          Text(
-                            'Evento',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
+                        
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DetallesEventoPage(evento: evento),
+                                ),
+                              );
+                            },
+                            child: Text('Detalles del Evento'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue[200], 
+                              foregroundColor: Color.fromARGB(181, 18, 19, 19)
+                            ),
+      
+                          ),
+                          SizedBox(height: 10), 
+                          Container(
+                            padding: EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: textColor),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Fecha y Hora:',
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor
+                                  ),
+                                ),
+                                SizedBox(height: 3.0),
+                                Text(
+                                  '${dateTime.toString()}',
+                                  style: TextStyle(fontSize: 14.0, color: textColor),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(width: 8.0),
-                      IconButton(
-                        onPressed: () {
-                          // Lógica al presionar el icono de "+"
-                        },
-                        icon: Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 24.0,
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 20.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center, // Centra verticalmente
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  bool alreadyLiked = likedEvents.contains(evento.id);
+                                  if (alreadyLiked) {
+                                    likedEvents.remove(evento.id);
+                                    evento.reference.update({'likes': evento['likes'] - 1});
+                                  } else {
+                                    likedEvents.add(evento.id);
+                                    evento.reference.update({'likes': evento['likes'] + 1});
+                                  }
+                                });
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.thumb_up,
+                                    size: 30.0,
+                                    color: likedEvents.contains(evento.id)
+                                        ? const Color.fromARGB(255, 13, 116, 200)
+                                        : Color.fromARGB(255, 239, 237, 237),
+                                  ),
+                                  SizedBox(height: 5.0),
+                                  Text(
+                                    '${evento['likes']}',
+                                    style: TextStyle(fontSize: 14.0, color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
-                Spacer(), // Para colocar el contenedor a la derecha
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => NuevoEventoPage(usuario: usuario)),
-                    );
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    child: Row(
-                      children: [
-                        Column(
-                          children: [
-                            Text(
-                              'Publicar ',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18.0,
-                              ),
-                            ),
-                            Text(
-                              'Evento',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(width: 8.0),
-                        Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 24.0,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 300,
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.purple),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Expanded(
-                            child: Center(
-                              child: Text(
-                                'Texto 1',
-                                style: TextStyle(fontSize: 20.0),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 300,
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.purple),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Expanded(
-                            child: Center(
-                              child: Text(
-                                'Texto 2',
-                                style: TextStyle(fontSize: 20.0),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 300,
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.purple),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Expanded(
-                            child: Center(
-                              child: Text(
-                                'Texto 3',
-                                style: TextStyle(fontSize: 20.0),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+              );
+            },
+          );
+        }
+          },
+        ),
+      )
+      
+      
+      
+          ],
+        ),
       ),
     );
   }
+
+  Stream<QuerySnapshot>? obtenerGetPorFiltro(filtro, now) {
+    switch (filtro) {
+      case '1':
+        return FirestoreService().getEventos();
+      case '2':
+        return FirestoreService().getEventosNombre();
+      case '3':
+        return FirestoreService().getEventosLikes();
+      case '4':
+        return FirestoreService().getEventosFechaAntes(now);
+      case '5':
+        return FirestoreService().getEventosFechaDespues(now);
+    }
+  }
 }
+
+
+
 
