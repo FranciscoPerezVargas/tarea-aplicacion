@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               decoration: BoxDecoration(
-                color: Color.fromARGB(170, 37, 208, 223),
+                color: const Color.fromARGB(255, 28, 97, 154),
               ),
             ),
             ListTile(

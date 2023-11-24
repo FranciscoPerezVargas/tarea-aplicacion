@@ -21,10 +21,7 @@ class UsuarioEventosPage extends StatelessWidget{
       ),
       body: Container(
         decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/aire.jpg'),
-                  fit: BoxFit.cover,
-                ),
+                color: Colors.blue[900],
               ),
         child: StreamBuilder(
         stream: FirestoreService().getEventosUsuario(usuario.uid),
@@ -50,7 +47,7 @@ class UsuarioEventosPage extends StatelessWidget{
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(10.0),
-                color: Colors.white
+                color: Color.fromARGB(220, 254, 191, 98)
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

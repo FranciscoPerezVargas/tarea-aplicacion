@@ -23,10 +23,7 @@ class DetallesEventoPage extends StatelessWidget {
       ),
       body: Container(
         decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/aire.jpg'),
-                  fit: BoxFit.cover,
-                ),
+                color: const Color.fromARGB(255, 144, 202, 249)
               ),
         child: Column(
           children: [

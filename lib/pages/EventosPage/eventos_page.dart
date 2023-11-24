@@ -28,10 +28,12 @@ class _EventosPageState extends State<EventosPage> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/Marino.jpg'),
-                  fit: BoxFit.cover,
-                ),
+                gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [const Color.fromARGB(255, 144, 200, 247), const Color.fromARGB(255, 252, 201, 123)], // Colores para el difuminado
+                        stops: [0.3, 0.9], // Puntos de parada del difuminado (opcional)
+                      ),
               ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -122,7 +124,7 @@ class _EventosPageState extends State<EventosPage> {
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 40.0, vertical: 5.0),
                   decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 33, 31, 31),
+                      color: const Color.fromARGB(255, 45, 107, 199),
                       border: Border.all(color: textColor)
                   ),
                   child: Row(
@@ -205,7 +207,7 @@ class _EventosPageState extends State<EventosPage> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                setState(() {
+                                
                                   bool alreadyLiked = likedEvents.contains(evento.id);
                                   if (alreadyLiked) {
                                     likedEvents.remove(evento.id);
@@ -214,7 +216,7 @@ class _EventosPageState extends State<EventosPage> {
                                     likedEvents.add(evento.id);
                                     evento.reference.update({'likes': evento['likes'] + 1});
                                   }
-                                });
+                               
                               },
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -223,7 +225,7 @@ class _EventosPageState extends State<EventosPage> {
                                     Icons.thumb_up,
                                     size: 30.0,
                                     color: likedEvents.contains(evento.id)
-                                        ? const Color.fromARGB(255, 13, 116, 200)
+                                        ? const Color.fromARGB(255, 241, 162, 42)
                                         : Color.fromARGB(255, 239, 237, 237),
                                   ),
                                   SizedBox(height: 5.0),

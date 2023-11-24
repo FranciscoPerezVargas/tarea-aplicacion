@@ -79,20 +79,27 @@ class LoginPage extends StatelessWidget {
                             padding: EdgeInsets.only(bottom: 20.0),
                             child: ElevatedButton(
                               onPressed: () {
-                               Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => HomePage(usuario: null),
-                                        ),
-                                      );
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => HomePage(usuario: null),
+                                  ),
+                                );
                               },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-                                child: Text(
-                                  'Comenzar',
-                                  style: TextStyle(fontSize: 18.0),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color.fromARGB(255, 221, 232, 242), // Color del fondo del botón
+                                foregroundColor: Colors.black, // Color del texto
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0), // Bordes ligeramente más cuadrados
                                 ),
                               ),
-                            ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 15.0), // Aumenta el padding
+                                child: Text(
+                                  'Comenzar',
+                                  style: TextStyle(fontSize: 20.0), // Ajusta el tamaño del texto
+                                ),
+                              ),
+                            )
                           ),
                         ],
                       ),
@@ -157,6 +164,13 @@ class LoginPage extends StatelessWidget {
                                     
                                   }
                               },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color.fromARGB(255, 221, 232, 242), // Color del fondo del botón
+                                foregroundColor: Colors.black, // Color del texto
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0), // Bordes ligeramente más cuadrados
+                                ),
+                              ),
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
                                 child: Text(

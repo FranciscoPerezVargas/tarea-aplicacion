@@ -6,7 +6,7 @@ BotonesEvento(context, usuario){
 
 
   return Container(
-  color: Colors.black,
+  color: Colors.blue[700],
   padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
   child: Row(
     children: [
