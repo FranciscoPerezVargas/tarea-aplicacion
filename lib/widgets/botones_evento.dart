@@ -50,7 +50,7 @@ BotonesEvento(context, usuario){
                 
                 IconButton(
                   onPressed: () {
-                    // Lógica al presionar el icono de "+"
+                    
                   },
                   icon: Icon(
                     Icons.add,

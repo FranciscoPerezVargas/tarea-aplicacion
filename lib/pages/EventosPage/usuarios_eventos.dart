@@ -40,7 +40,7 @@ class UsuarioEventosPage extends StatelessWidget{
             DateTime fecha = (evento['fechaHora'] as Timestamp).toDate();
             Image imagenEvento = Image.network(evento['imagenURL']);
       
-            // Aquí se combina el contenedor de DetallesEventoPage
+           
             return Container(
               margin: EdgeInsets.all(20.0),
               padding: EdgeInsets.all(12.0),
@@ -177,7 +177,7 @@ class UsuarioEventosPage extends StatelessWidget{
                                   child: Container(
                                     padding: EdgeInsets.all(10.0),
                                     decoration: BoxDecoration(
-                                      color: Colors.blue, // Color azul para Editar
+                                      color: const Color.fromARGB(255, 33, 150, 243), 
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
                                     child: Column(
@@ -237,10 +237,8 @@ class UsuarioEventosPage extends StatelessWidget{
                                     ],
                                   ),
                                 ),
-                              )
-                                
+                              )   
                               ],
-                            
                             ),
                           ],
                         ),

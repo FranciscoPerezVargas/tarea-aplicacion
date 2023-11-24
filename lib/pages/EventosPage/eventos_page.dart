@@ -1,13 +1,11 @@
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_certamen_aplicacion/pages/EventosPage/detalles_eventos_page.dart';
-import 'package:flutter_certamen_aplicacion/pages/EventosPage/nuevo_evento_page.dart';
 import 'package:flutter_certamen_aplicacion/services/firestore_service.dart';
 import 'package:flutter_certamen_aplicacion/widgets/botones_evento.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+
 
 class EventosPage extends StatefulWidget {
   final User? usuario;
@@ -31,14 +29,15 @@ class _EventosPageState extends State<EventosPage> {
                 gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [const Color.fromARGB(255, 144, 200, 247), const Color.fromARGB(255, 252, 201, 123)], // Colores para el difuminado
-                        stops: [0.3, 0.9], // Puntos de parada del difuminado (opcional)
+                        colors: [const Color.fromARGB(255, 144, 200, 247), 
+                        const Color.fromARGB(255, 252, 201, 123)], 
+                        stops: [0.3, 0.9], 
                       ),
               ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Editar y Nuevo Evento
+            // Editar y Nuevo Evento (Esta en la carpeta widgets)
             widget.usuario != null ? BotonesEvento(context, widget.usuario!) : SizedBox(),
       
             // Filtro
@@ -202,12 +201,12 @@ class _EventosPageState extends State<EventosPage> {
                       Container(
                         padding: EdgeInsets.symmetric(vertical: 20.0),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center, // Centra verticalmente
+                          mainAxisAlignment: MainAxisAlignment.center, 
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             GestureDetector(
                               onTap: () {
-                                
+                                  //Si ya esta con el like no olvidar
                                   bool alreadyLiked = likedEvents.contains(evento.id);
                                   if (alreadyLiked) {
                                     likedEvents.remove(evento.id);
@@ -246,17 +245,13 @@ class _EventosPageState extends State<EventosPage> {
             },
           );
         }
-          },
-        ),
-      )
-      
-      
-      
-          ],
-        ),
+        },
       ),
-    );
-  }
+    )
+    ],
+  ),),
+  );
+}
 
   Stream<QuerySnapshot>? obtenerGetPorFiltro(filtro, now) {
     switch (filtro) {

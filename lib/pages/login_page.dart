@@ -47,8 +47,9 @@ class LoginPage extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [const Color.fromARGB(255, 144, 200, 247), const Color.fromARGB(255, 252, 201, 123)], // Colores para el difuminado
-                        stops: [0.3, 0.9], // Puntos de parada del difuminado (opcional)
+                        colors: [const Color.fromARGB(255, 144, 200, 247), 
+                        const Color.fromARGB(255, 252, 201, 123)], 
+                        stops: [0.3, 0.9], 
                       ),
                     ),
                       child: Column(
@@ -86,17 +87,17 @@ class LoginPage extends StatelessWidget {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(255, 221, 232, 242), // Color del fondo del botón
-                                foregroundColor: Colors.black, // Color del texto
+                                backgroundColor: const Color.fromARGB(255, 221, 232, 242), 
+                                foregroundColor: Colors.black,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0), // Bordes ligeramente más cuadrados
+                                  borderRadius: BorderRadius.circular(8.0), 
                                 ),
                               ),
                               child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 15.0), // Aumenta el padding
+                                padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 15.0),
                                 child: Text(
                                   'Comenzar',
-                                  style: TextStyle(fontSize: 20.0), // Ajusta el tamaño del texto
+                                  style: TextStyle(fontSize: 20.0), 
                                 ),
                               ),
                             )
@@ -116,8 +117,9 @@ class LoginPage extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [const Color.fromARGB(255, 144, 200, 247), const Color.fromARGB(255, 252, 201, 123)], // Colores para el difuminado
-                        stops: [0.3, 0.9], // Puntos de parada del difuminado (opcional)
+                        colors: [const Color.fromARGB(255, 144, 200, 247), 
+                        const Color.fromARGB(255, 252, 201, 123)], 
+                        stops: [0.3, 0.9], 
                       ),
                     ),
                       child: Column(
@@ -159,16 +161,16 @@ class LoginPage extends StatelessWidget {
                                       );
                                     }
                                   } catch (e) {
-                                    // Manejar cualquier excepción
+                                    
                                     print('Error al iniciar sesión: $e');
                                     
                                   }
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(255, 221, 232, 242), // Color del fondo del botón
-                                foregroundColor: Colors.black, // Color del texto
+                                backgroundColor: const Color.fromARGB(255, 221, 232, 242), 
+                                foregroundColor: Colors.black,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0), // Bordes ligeramente más cuadrados
+                                  borderRadius: BorderRadius.circular(8.0), 
                                 ),
                               ),
                               child: Padding(
@@ -192,13 +194,5 @@ class LoginPage extends StatelessWidget {
         )
         
     );
-
-                
-              
-            
-          
-        
-      
-
   }
 }

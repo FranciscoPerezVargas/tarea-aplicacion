@@ -64,15 +64,11 @@ class _HomePageState extends State<HomePage> {
                   ),
                 )
               : SizedBox();
-            
           },
         ),
         
       ),
-      body: 
-      
-      Padding(
-        
+      body: Padding(
         padding: const EdgeInsets.only(top: 90.0),
         child: _showEventos ? EventosPage(usuario: widget.usuario) : null,
       ),
@@ -99,14 +95,13 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               title: Text('Cerrar sesión'),
               onTap: () async {
-                await _cerrarSesion(context); // Llama a la función para cerrar la sesión
+                await _cerrarSesion(context); 
               },
             ),
           ],
         ),
       )
     : null,
-
     );
   }
 }

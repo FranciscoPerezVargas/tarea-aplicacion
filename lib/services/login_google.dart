@@ -18,11 +18,11 @@ class LoginGoogle {
           idToken: googleSignInAuthentication.idToken,
         );
 
-        final UserCredential authResult =
+        final UserCredential resultadoAuth =
             await _auth.signInWithCredential(credential);
 
-        final User? user = authResult.user;
-        return user;
+        final User? usuario = resultadoAuth.user;
+        return usuario;
       }
     } catch (e) {
       // Manejar errores
